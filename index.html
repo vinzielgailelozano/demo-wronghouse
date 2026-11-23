@@ -186,6 +186,35 @@ body{background:#E4E8E2}
 .splash{padding-top:30px}
 .toast{top:16px}
 @media (max-width:480px){.phone{box-shadow:none}body{background:var(--bg)}}
+
+/* ---------- responsive: tablet & desktop ---------- */
+.brand{display:none}
+@media (min-width:900px){
+ body{background:var(--bg)}
+ .phone{max-width:none;box-shadow:none}
+ .scr{padding:44px max(32px,calc((100% - 460px)/2)) 48px}
+ .phone:has(.nav) .scr{left:250px;padding:44px max(48px,calc((100% - 720px)/2)) 48px}
+ .phone:has(.nav) .scr[data-s=home],.phone:has(.nav) .scr[data-s=bookings]{padding-left:max(48px,calc((100% - 1040px)/2));padding-right:max(48px,calc((100% - 1040px)/2))}
+ .scr[data-s=payment],.scr[data-s=checkout],.scr[data-s=confirmed],.scr[data-s=details],.scr[data-s=password]{padding-left:max(48px,calc((100% - 560px)/2));padding-right:max(48px,calc((100% - 560px)/2))}
+ .nav{position:absolute;top:0;bottom:0;right:auto;width:250px;height:auto;flex-direction:column;gap:6px;padding:28px 16px;background:var(--gd);border:0}
+ .brand{display:flex;gap:12px;align-items:center;padding:0 8px 28px;color:#fff}
+ .brand .logo{width:42px;height:42px;border-radius:12px;flex:none}
+ .brand b{display:block;font-size:16px;font-weight:800}.brand small{font-size:11px;font-weight:700;color:var(--l);letter-spacing:.1em}
+ .nav button{flex:none;flex-direction:row;justify-content:flex-start;gap:12px;padding:0 14px;height:48px;border-radius:12px;font-size:15px;color:var(--sg)}
+ .nav button .pill{width:auto;height:auto;background:none!important}
+ .nav button:hover{background:rgba(255,255,255,.06)}
+ .nav button.on{background:var(--g);color:#fff}.nav button.on .pill{color:var(--l)}
+ .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px!important}
+ .grid2 .empty{grid-column:1/-1}
+ .dates{margin:0;padding:0 0 4px}
+ .dates button{width:auto;flex:1;min-width:62px}
+ .t1{font-size:28px}.hdr{margin-bottom:22px}
+ .sheet{left:50%;right:auto;bottom:auto;top:50%;width:440px;transform:translate(-50%,-50%);border-radius:24px;animation:fade .2s}
+ .sheet:before{display:none}
+ .dlg{left:50%;right:auto;width:400px;transform:translate(-50%,-50%)}
+ .toast{left:auto;right:28px;top:28px;width:380px}
+ .btn.p,.btn.o,.btn.d,.btn.l{max-width:100%}
+}
 </style>
 </head>
 <body>
@@ -234,7 +263,7 @@ function slotTaken(date,s,e){const t=(TAKEN[date]||[]).some(i=>SLOTS[i][0]<e&&SL
 const sbar=(light)=>`<div class="sbar${light?' light':''}"><span>9:41</span><span class="batt"><i></i></span></div>`;
 const hdr=(t,o={})=>`<div class="hdr">${o.back?`<button class="back" data-go="${o.back}" aria-label="Back">${I('back',22,2.5)}</button>`:''}<div class="grow"><div class="t1">${t}</div>${o.sub?`<div class="sub">${o.sub}</div>`:''}</div>${o.av?`<button class="av" data-go="settings" aria-label="Settings">${ini()}</button>`:''}${o.right||''}</div>`;
 const NAV=[['Home','home','home'],['Book','cal','book'],['My Bookings','list','bookings'],['Settings','gear','settings']];
-const nav=a=>`<nav class="nav">${NAV.map(([l,k,g])=>`<button class="${l===a?'on':''}" data-go="${g}"><span class="pill">${I(k)}</span>${l}</button>`).join('')}</nav>`;
+const nav=a=>`<nav class="nav"><div class="brand"><span class="logo">${I('ball',24,1.8)}</span><div><b>Wrong House</b><small>PICKLEBALL</small></div></div>${NAV.map(([l,k,g])=>`<button class="${l===a?'on':''}" data-go="${g}"><span class="pill">${I(k)}</span>${l}</button>`).join('')}</nav>`;
 const inp=(lab,bind,val,o={})=>`<div class="fld"><label class="lab">${lab}</label><div class="inp${o.err?' err':''}">${o.ic?I(o.ic):''}<input ${o.pw?'type="password"':'type="text"'} data-bind="${bind}" value="${esc(val)}" placeholder="${o.ph||''}">${o.pw?`<button class="eye" data-act="peek" aria-label="Show password">${I('eye')}</button>`:''}</div></div>`;
 const rows=R=>`<div class="rows">${R.map(([k,v])=>`<div class="r"><span>${k}</span><span>${v}</span></div>`).join('')}</div>`;
 const badge=t=>`<span class="badge b-${t}">${t}</span>`;
@@ -278,7 +307,7 @@ SC.home=()=>{const d=di(S.date);const open=SLOTS.filter(([s,e])=>!slotTaken(S.da
  <div class="rates"><div><small>TODAY'S RATES</small><span>6 AM – 4 PM</span><b>₱50 / hr per person</b></div><div><small>&nbsp;</small><span>4 PM – 11 PM</span><b>₱300 / hr flat</b></div></div>
  <div class="h3" style="margin:22px 0 10px">Choose a date</div><div class="dates">${DATES.map(x=>{const q=di(x);return `<button class="${x===S.date?'on':''}" data-act="pickDate" data-d="${x}"><small>${q.dow}</small><b>${+q.day}</b></button>`}).join('')}</div>
  <div style="display:flex;justify-content:space-between;align-items:baseline;margin:22px 0 10px"><span class="h3">Available slots · ${d.short}</span><span style="font-size:13px;font-weight:600;color:var(--g)">${open} open</span></div>
- <div class="stack" style="gap:10px">${SLOTS.map(([s,e])=>{const t=slotTaken(S.date,s,e);return `<div class="slot${t?' off':''}"><span class="ci">${I('clock')}</span><div class="grow"><div class="st">${range(s,e)}</div><div class="rt">${rateLbl(s,e)} · ${peso(price(s,e,4))} for 4</div></div>${t?badge('Booked'):`<button class="btn p xs" data-act="pickSlot" data-s="${s}" data-e="${e}">Book</button>`}</div>`}).join('')}</div></div>${nav('Home')}`};
+ <div class="stack grid2" style="gap:10px">${SLOTS.map(([s,e])=>{const t=slotTaken(S.date,s,e);return `<div class="slot${t?' off':''}"><span class="ci">${I('clock')}</span><div class="grow"><div class="st">${range(s,e)}</div><div class="rt">${rateLbl(s,e)} · ${peso(price(s,e,4))} for 4</div></div>${t?badge('Booked'):`<button class="btn p xs" data-act="pickSlot" data-s="${s}" data-e="${e}">Book</button>`}</div>`}).join('')}</div></div>${nav('Home')}`};
 SC.book=()=>{const k=S.bk,d=di(k.date),bad=k.e<=k.s,clash=!bad&&slotTaken(k.date,k.s,k.e),tot=bad?0:price(k.s,k.e,k.p);
  const opts=(a,b,v)=>{let o='';for(let h=a;h<=b;h++)o+=`<option value="${h}"${h===v?' selected':''}>${ft(h)}</option>`;return o};
  return `${sbar()}<div class="scr">${hdr('Book a Court',{back:'home',sub:'Pick your time and number of players.'})}
@@ -312,7 +341,7 @@ SC.confirmed=()=>{const b=B(S.sel),d=di(b.date),cash=b.pay==='Cash';
  <div class="stack"><button class="btn p" data-act="toBookings">View My Bookings</button><button class="btn o" data-go="home">Back to Home</button></div></div>`};
 SC.bookings=()=>{const L={up:S.bookings.filter(b=>b.st==='Confirmed'||b.st==='Pending'),past:S.bookings.filter(b=>b.st==='Completed'),cx:S.bookings.filter(b=>b.st==='Cancelled')}[S.tab];
  return `${sbar()}<div class="scr">${hdr('My Bookings',{sub:'Wrong House Pickleball',av:1})}<div class="tabs">${[['up','Upcoming'],['past','Past'],['cx','Cancelled']].map(([k,l])=>`<button class="${S.tab===k?'on':''}" data-act="tab" data-t="${k}">${l}</button>`).join('')}</div>
- <div class="stack" style="gap:14px">${L.length?L.map(card).join(''):`<div class="empty">${S.tab==='up'?`No upcoming games yet.<br><br><button class="btn p sm" style="margin:auto" data-go="home">Book a court</button>`:'Nothing here yet.'}</div>`}${S.tab==='past'&&L.length?`<p class="empty" style="padding:6px">That's all your past games.</p>`:''}</div></div>${nav('My Bookings')}`};
+ <div class="stack grid2" style="gap:14px">${L.length?L.map(card).join(''):`<div class="empty">${S.tab==='up'?`No upcoming games yet.<br><br><button class="btn p sm" style="margin:auto" data-go="home">Book a court</button>`:'Nothing here yet.'}</div>`}${S.tab==='past'&&L.length?`<p class="empty" style="padding:6px">That's all your past games.</p>`:''}</div></div>${nav('My Bookings')}`};
 SC.details=()=>{const b=B(S.sel),d=di(b.date),up=b.st==='Confirmed'||b.st==='Pending';
  return `${sbar()}<div class="scr nonav">${hdr('Booking Details',{back:'bookings',right:badge(b.st)})}
  <div class="hero"><div class="date"><small>${d.mon}</small><b>${d.day}</b></div><div><div style="font-size:13px;color:var(--sg);font-weight:500">${d.dowl}</div><div style="font-size:20px;font-weight:800;margin:2px 0">${range(b.s,b.e)}</div><div style="font-size:13px;color:var(--sg)">${b.e-b.s} hour${b.e-b.s>1?'s':''} · ${b.p} players</div></div></div>
