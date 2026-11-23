@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wrong House Pickleball – Mobile Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--g:#1F5E3B;--gd:#164A2E;--l:#C6E641;--ll:#EEF7CF;--bg:#F5F7F2;--w:#fff;--k:#1B1F1C;--gr:#6B736D;--ln:#E3E8E1;--r:#D64545;--rl:#FDECEC;--am:#B7791F;--al:#FDF3DC;--bl:#E6F0FA;--bu:#2F6FB0;--mu:#9AA29C;--sg:#A9C9B5;--gy:#F1F1F1}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:Inter,system-ui,sans-serif;color:var(--k);background:#E4E8E2;-webkit-font-smoothing:antialiased}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+.stage{min-height:100%;display:flex;gap:40px;justify-content:center;align-items:flex-start;padding:32px 24px}
+/* side panel */
+.panel{width:280px;position:sticky;top:32px;display:flex;flex-direction:column;gap:14px}
+.panel h1{font-size:20px;font-weight:800;line-height:1.2}
+.panel p{font-size:13px;color:var(--gr);line-height:1.5}
+.grp{background:var(--w);border:1px solid var(--ln);border-radius:16px;padding:12px}
+.grp h2{font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--gr);text-transform:uppercase;padding:2px 6px 8px}
+.grp button{display:flex;width:100%;text-align:left;padding:7px 8px;border-radius:9px;font-size:13px;gap:8px;align-items:center}
+.grp button span{color:var(--mu);font-size:12px;width:28px;flex:none}
+.grp button:hover{background:var(--bg)}
+.grp button.on{background:var(--ll);color:var(--g);font-weight:600}
+.grp button.on span{color:var(--g)}
+.mclose{display:none}
+@media (max-width:760px){.mclose{display:block}}
+.reset{font-size:13px;font-weight:600;color:var(--g);padding:8px;text-align:center;border:1.5px solid var(--ln);border-radius:12px;background:var(--w)}
+/* phone */
+.phone{width:390px;height:844px;flex:none;border-radius:48px;background:var(--bg);position:relative;overflow:hidden;box-shadow:0 0 0 10px #111,0 0 0 11px #333,0 30px 60px rgba(0,0,0,.25)}
+.sbar{position:absolute;top:0;left:0;right:0;height:44px;display:flex;justify-content:space-between;align-items:center;padding:0 30px;font-size:15px;font-weight:600;z-index:30;pointer-events:none}
+.sbar.light{color:#fff}
+.batt{width:25px;height:12px;border:1.2px solid currentColor;border-radius:3px;padding:1.5px}.batt i{display:block;height:100%;width:80%;background:currentColor;border-radius:1.5px}
+.mtop{display:none}
+.scr{position:absolute;inset:0;overflow-y:auto;padding:54px 20px 110px;scrollbar-width:none}
+.scr::-webkit-scrollbar{display:none}
+.scr.nonav{padding-bottom:40px}
+/* type */
+.t1{font-size:24px;font-weight:800;letter-spacing:-.01em}
+.t2{font-size:28px;font-weight:800;letter-spacing:-.01em}
+.sub{font-size:13px;color:var(--gr);margin-top:4px;line-height:1.45}
+.lab{font-size:13px;font-weight:600;margin-bottom:6px;display:block}
+.sec{font-size:12px;font-weight:700;color:var(--gr);letter-spacing:.04em;margin:22px 0 10px}
+.h3{font-size:15px;font-weight:700}
+.muted{color:var(--gr)}
+.center{text-align:center}
+/* header */
+.hdr{display:flex;align-items:flex-start;gap:6px;min-height:52px;margin-bottom:14px}
+.hdr .grow{flex:1}
+.back{width:40px;height:40px;margin:-4px 0 0 -10px;display:grid;place-items:center;border-radius:20px}
+.back:hover{background:rgba(0,0,0,.05)}
+.av{width:40px;height:40px;border-radius:50%;background:var(--g);color:#fff;display:grid;place-items:center;font-weight:700;font-size:13px;flex:none}
+/* buttons */
+.btn{height:52px;border-radius:26px;width:100%;font-weight:600;font-size:15px;display:flex;align-items:center;justify-content:center;gap:10px;transition:transform .08s,filter .15s}
+.btn:active{transform:scale(.98)}
+.btn.p{background:var(--g);color:#fff}.btn.p:hover{filter:brightness(1.1)}
+.btn.o{background:var(--w);border:1.5px solid var(--ln)}
+.btn.d{background:var(--w);border:1.5px solid var(--r);color:var(--r)}
+.btn.D{background:var(--r);color:#fff}
+.btn.l{background:var(--l);color:var(--gd)}
+.btn.sm{height:40px;border-radius:20px;font-size:14px;width:auto;padding:0 18px}
+.btn.xs{height:34px;border-radius:17px;font-size:14px;width:auto;padding:0 16px}
+.btn[disabled]{opacity:.45;pointer-events:none}
+.link{color:var(--g);font-weight:700}
+.foot{font-size:14px;color:var(--gr);text-align:center;margin-top:20px}
+.stack{display:flex;flex-direction:column;gap:12px}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}.inp{min-width:0}
+/* inputs */
+.fld{margin-bottom:14px}
+.inp{height:48px;border:1.5px solid var(--ln);border-radius:12px;background:var(--w);display:flex;align-items:center;gap:10px;padding:0 14px;color:var(--mu)}
+.inp:focus-within{border-color:var(--g)}
+.inp input,.inp select{border:0;outline:0;background:none;flex:1;min-width:0;height:100%;font-size:15px;color:var(--k);appearance:none}
+.inp.err{border-color:var(--r)}
+.errmsg{font-size:12.5px;color:var(--r);background:var(--rl);border-radius:10px;padding:10px 12px;margin-bottom:14px}
+.eye{color:var(--mu);display:grid}
+/* cards */
+.card{background:var(--w);border:1px solid var(--ln);border-radius:16px;padding:16px}
+.rows .r{display:flex;justify-content:space-between;gap:12px;font-size:14px;padding:9px 0;border-bottom:1px solid var(--ln)}
+.rows .r:last-child{border-bottom:0}
+.rows .r span:first-child{color:var(--gr)}
+.rows .r span:last-child{font-weight:600;text-align:right}
+.total{display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid var(--k);margin-top:6px;padding-top:12px}
+.total b{font-size:16px}.total strong{font-size:22px;font-weight:800;color:var(--g)}
+.badge{display:inline-block;font-size:12px;font-weight:600;padding:4px 11px;border-radius:12px;white-space:nowrap}
+.b-Confirmed,.b-Paid{background:var(--ll);color:var(--g)}.b-Pending{background:var(--al);color:var(--am)}.b-Completed{background:var(--bl);color:var(--bu)}.b-Cancelled{background:var(--rl);color:var(--r)}.b-Booked{background:var(--gy);color:var(--gr)}
+.note{display:flex;gap:10px;align-items:flex-start;font-size:12.5px;border-radius:12px;padding:12px;line-height:1.45}
+.note.blue{background:var(--bl);color:var(--bu)}.note.green{background:var(--ll);color:var(--g)}.note.amber{background:var(--al);color:var(--am)}
+.note svg{flex:none;margin-top:-1px}
+/* booking card */
+.bk{background:var(--w);border:1px solid var(--ln);border-radius:16px;padding:16px;cursor:pointer}
+.bk:hover{border-color:#cfd6cc}
+.bk .top{display:flex;gap:14px}
+.date{width:56px;height:60px;border-radius:12px;background:var(--ll);display:flex;flex-direction:column;align-items:center;justify-content:center;flex:none}
+.date small{font-size:11px;font-weight:700;color:var(--g)}.date b{font-size:24px;font-weight:800;line-height:1.1}
+.date.mute{background:var(--gy)}.date.mute small{color:var(--gr)}
+.bk .info{flex:1;min-width:0}.bk .time{font-size:16px;font-weight:700}.bk .meta{font-size:12.5px;color:var(--gr);margin-top:3px;line-height:1.45}
+.bk .bot{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--ln);margin-top:14px;padding-top:12px}
+.bk .bot small{font-size:12px;color:var(--gr);display:block}.bk .bot b{font-size:18px;font-weight:800}
+.bk .acts{display:flex;gap:8px}
+.refund{font-size:12px;font-weight:500;border-radius:8px;padding:6px 12px;margin-top:10px}
+.empty{text-align:center;color:var(--mu);font-size:14px;padding:40px 10px}
+/* tabs */
+.tabs{display:flex;background:var(--w);border:1px solid var(--ln);border-radius:22px;padding:4px;margin-bottom:18px}
+.tabs button{flex:1;height:36px;border-radius:18px;font-size:14px;font-weight:600;color:var(--gr)}
+.tabs button.on{background:var(--g);color:#fff}
+/* nav */
+.nav{position:absolute;left:0;right:0;bottom:0;height:84px;background:var(--w);border-top:1px solid var(--ln);display:flex;z-index:10}
+.nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;padding-top:7px;font-size:11px;font-weight:500;color:var(--mu)}
+.nav button .pill{width:60px;height:32px;border-radius:16px;display:grid;place-items:center}
+.nav button.on{color:var(--g);font-weight:600}.nav button.on .pill{background:var(--ll)}
+/* overlays */
+.ov{position:absolute;inset:0;background:rgba(0,0,0,.45);z-index:40;animation:fade .2s}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:var(--w);border-radius:24px 24px 0 0;padding:28px 20px 30px;z-index:41;animation:up .25s ease-out}
+.sheet:before{content:"";position:absolute;top:10px;left:50%;width:40px;height:5px;margin-left:-20px;border-radius:3px;background:var(--ln)}
+.dlg{position:absolute;left:30px;right:30px;top:50%;transform:translateY(-50%);background:var(--w);border-radius:24px;padding:28px 20px 20px;z-index:41;text-align:center;animation:fade .2s}
+.ico{width:56px;height:56px;border-radius:50%;display:grid;place-items:center;margin:0 auto 14px}
+.ico.red{background:var(--rl);color:var(--r)}.ico.green{background:var(--ll);color:var(--g)}
+.toast{position:absolute;left:20px;right:20px;top:50px;background:var(--gd);color:#fff;border-radius:14px;padding:14px 16px;display:flex;gap:12px;align-items:center;z-index:50;animation:drop .25s ease-out;box-shadow:0 10px 30px rgba(0,0,0,.2)}
+.toast .ck{width:28px;height:28px;border-radius:50%;background:var(--l);color:var(--gd);display:grid;place-items:center;flex:none}
+.toast b{font-size:15px;display:block}.toast small{font-size:12.5px;color:#CFE3D6}
+@keyframes fade{from{opacity:0}}@keyframes up{from{transform:translateY(100%)}}@keyframes drop{from{transform:translateY(-20px);opacity:0}}
+/* specific */
+.splash{background:var(--gd);color:#fff;overflow:hidden;display:flex;flex-direction:column;padding:54px 24px 40px}
+.deco{position:absolute;border-radius:50%;background:var(--g)}
+.logo{background:var(--l);color:var(--gd);display:grid;place-items:center}
+.rates{background:var(--gd);color:#fff;border-radius:18px;padding:16px 18px;display:flex;gap:16px}
+.rates>div{flex:1}.rates>div+div{border-left:1px solid var(--g);padding-left:16px}
+.rates small{font-size:11px;font-weight:700;color:var(--l);display:block;margin-bottom:6px;letter-spacing:.04em}
+.rates span{font-size:13px;color:var(--sg);display:block}.rates b{font-size:15px;font-weight:800}
+.dates{display:flex;gap:8px;overflow-x:auto;margin:0 -20px;padding:0 20px 4px;scrollbar-width:none}
+.dates::-webkit-scrollbar{display:none}
+.dates button{width:62px;height:72px;flex:none;border-radius:16px;background:var(--w);border:1px solid var(--ln);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.dates button small{font-size:12px;color:var(--gr);font-weight:500}.dates button b{font-size:20px;font-weight:800}
+.dates button.on{background:var(--g);border-color:var(--g);color:#fff}.dates button.on small{color:var(--l)}
+.slot{display:flex;align-items:center;gap:12px;background:var(--w);border:1px solid var(--ln);border-radius:14px;padding:10px 12px}
+.slot .ci{width:36px;height:36px;border-radius:50%;background:var(--ll);color:var(--g);display:grid;place-items:center;flex:none}
+.slot.off .ci{background:var(--gy);color:var(--mu)}.slot.off .st{color:var(--mu)}
+.slot .st{font-size:15px;font-weight:700}.slot .rt{font-size:12px;color:var(--gr);margin-top:2px}
+.slot .grow{flex:1}
+.step{display:flex;align-items:center;justify-content:space-between;height:52px;border:1.5px solid var(--ln);border-radius:12px;background:var(--w);padding:0 8px}
+.step button{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;border:1.5px solid var(--ln)}
+.step button.plus{background:var(--g);border-color:var(--g);color:#fff}
+.step b{font-size:15px;display:flex;gap:8px;align-items:center}
+.opt{display:flex;align-items:center;gap:12px;background:var(--w);border:1px solid var(--ln);border-radius:16px;padding:14px;width:100%;text-align:left}
+.opt.on{border:2px solid var(--g);padding:13px}
+.opt .oi{width:40px;height:40px;border-radius:12px;background:var(--gy);color:var(--gr);display:grid;place-items:center;flex:none}
+.opt.on .oi{background:var(--ll);color:var(--g)}
+.opt .grow{flex:1}.opt b{font-size:15px;display:block}.opt small{font-size:12px;color:var(--gr)}
+.radio{width:24px;height:24px;border-radius:50%;border:2px solid var(--mu);display:grid;place-items:center;flex:none}
+.opt.on .radio{border-color:var(--g)}.opt.on .radio:after{content:"";width:12px;height:12px;border-radius:50%;background:var(--g)}
+.hero{background:var(--gd);color:#fff;border-radius:20px;padding:20px;display:flex;gap:16px;align-items:center}
+.hero .date{background:var(--l);width:64px;height:68px}.hero .date small,.hero .date b{color:var(--gd)}
+.toggle{width:46px;height:26px;border-radius:13px;background:var(--ln);position:relative;flex:none;transition:background .2s}
+.toggle:after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 2px rgba(0,0,0,.15)}
+.toggle.on{background:var(--g)}.toggle.on:after{left:23px}
+.arow{display:flex;align-items:center;gap:12px;padding:16px;border-bottom:1px solid var(--ln);width:100%;text-align:left;font-size:15px;font-weight:500;color:var(--k)}
+.arow:last-child{border-bottom:0}.arow .grow{flex:1}.arow>svg:first-child{color:var(--gr)}
+.chk{display:flex;gap:10px;align-items:center;font-size:13px;color:var(--gr);margin-bottom:8px}
+.chk i{width:20px;height:20px;border-radius:50%;background:var(--gy);display:grid;place-items:center;color:#fff;flex:none}
+.chk.ok i{background:var(--ll);color:var(--g)}.chk.ok{color:var(--k)}
+.bars{display:flex;gap:6px;margin:8px 0 14px}.bars i{flex:1;height:6px;border-radius:3px;background:var(--ln)}
+.cb{width:22px;height:22px;border-radius:6px;border:1.5px solid var(--mu);display:grid;place-items:center;flex:none;color:#fff}
+.cb.on{background:var(--g);border-color:var(--g)}
+.divider{display:flex;align-items:center;gap:12px;color:var(--gr);font-size:12px;margin:22px 0 16px}.divider:before,.divider:after{content:"";flex:1;height:1px;background:var(--ln)}
+.mark{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:14px}
+@media (max-width:760px){
+ .stage{padding:0;display:block}
+ .panel{display:none}
+ .panel.open{display:flex;position:fixed;inset:0;z-index:100;background:#E4E8E2;width:auto;padding:20px;overflow:auto;top:0}
+ .phone{width:100%;height:100vh;height:100dvh;border-radius:0;box-shadow:none}
+ .sbar{display:none}
+ .mtop{display:flex;position:fixed;right:12px;bottom:96px;z-index:60;background:var(--k);color:#fff;font-size:12px;font-weight:600;border-radius:16px;padding:8px 12px;opacity:.85}
+ .scr{padding-top:20px}
+ .splash{padding-top:30px}
+ .toast{top:16px}
+}
+
+/* web app mode */
+body{background:#E4E8E2}
+.stage{display:block;padding:0;min-height:100vh}
+.phone{width:100%;max-width:480px;height:100vh;height:100dvh;margin:0 auto;border-radius:0;box-shadow:0 0 40px rgba(0,0,0,.08)}
+.sbar{display:none!important}
+.scr{padding-top:24px}
+.splash{padding-top:30px}
+.toast{top:16px}
+@media (max-width:480px){.phone{box-shadow:none}body{background:var(--bg)}}
+
+/* ---------- responsive: tablet & desktop ---------- */
+.brand{display:none}
+@media (min-width:900px){
+ body{background:var(--bg)}
+ .phone{max-width:none;box-shadow:none}
+ .scr{padding:44px max(32px,calc((100% - 460px)/2)) 48px}
+ .phone:has(.nav) .scr{left:250px;padding:44px max(48px,calc((100% - 720px)/2)) 48px}
+ .phone:has(.nav) .scr[data-s=home],.phone:has(.nav) .scr[data-s=bookings]{padding-left:max(48px,calc((100% - 1040px)/2));padding-right:max(48px,calc((100% - 1040px)/2))}
+ .scr[data-s=payment],.scr[data-s=checkout],.scr[data-s=confirmed],.scr[data-s=details],.scr[data-s=password]{padding-left:max(48px,calc((100% - 560px)/2));padding-right:max(48px,calc((100% - 560px)/2))}
+ .nav{position:absolute;top:0;bottom:0;right:auto;width:250px;height:auto;flex-direction:column;gap:6px;padding:28px 16px;background:var(--gd);border:0}
+ .brand{display:flex;gap:12px;align-items:center;padding:0 8px 28px;color:#fff}
+ .brand .logo{width:42px;height:42px;border-radius:12px;flex:none}
+ .brand b{display:block;font-size:16px;font-weight:800}.brand small{font-size:11px;font-weight:700;color:var(--l);letter-spacing:.1em}
+ .nav button{flex:none;flex-direction:row;justify-content:flex-start;gap:12px;padding:0 14px;height:48px;border-radius:12px;font-size:15px;color:var(--sg)}
+ .nav button .pill{width:auto;height:auto;background:none!important}
+ .nav button:hover{background:rgba(255,255,255,.06)}
+ .nav button.on{background:var(--g);color:#fff}.nav button.on .pill{color:var(--l)}
+ .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px!important}
+ .grid2 .empty{grid-column:1/-1}
+ .dates{margin:0;padding:0 0 4px}
+ .dates button{width:auto;flex:1;min-width:62px}
+ .t1{font-size:28px}.hdr{margin-bottom:22px}
+ .sheet{left:50%;right:auto;bottom:auto;top:50%;width:440px;transform:translate(-50%,-50%);border-radius:24px;animation:fade .2s}
+ .sheet:before{display:none}
+ .dlg{left:50%;right:auto;width:400px;transform:translate(-50%,-50%)}
+ .toast{left:auto;right:28px;top:28px;width:380px}
+ .btn.p,.btn.o,.btn.d,.btn.l{max-width:100%}
+}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="phone" id="phone"></div>
+</div>
+<script>
+// ---------- icons ----------
+const IC={home:'<path d="M3 11l9-8 9 8v10H3z"/>',cal:'<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/>',list:'<path d="M4 6h16M4 12h16M4 18h16"/>',gear:'<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3" fill="currentColor"/>',back:'<path d="M15 5l-7 7 7 7"/>',chev:'<path d="M9 5l7 7-7 7"/>',check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',pin:'<path d="M12 21s-7-6.5-7-11a7 7 0 0114 0c0 4.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5" fill="currentColor"/>',x:'<path d="M6 6l12 12M18 6L6 18"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',users:'<circle cx="9" cy="8" r="3.5"/><path d="M3 20c0-3.5 2.7-6 6-6s6 2.5 6 6M16 4.5a3.5 3.5 0 010 7M18 14c2 .7 3 2.8 3 6"/>',mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',lock:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/>',eye:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',eyeoff:'<path d="M3 3l18 18M10.6 5.1A10 10 0 0112 5c6.5 0 10 7 10 7a17 17 0 01-3.2 4.2M6.6 6.6C3.8 8.4 2 12 2 12s3.5 7 10 7c1.8 0 3.4-.5 4.7-1.3"/>',phone:'<rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/>',ball:'<circle cx="12" cy="12" r="9"/><circle cx="9" cy="9" r="1.2" fill="currentColor"/><circle cx="15" cy="9" r="1.2" fill="currentColor"/><circle cx="12" cy="12.5" r="1.2" fill="currentColor"/><circle cx="9" cy="16" r="1.2" fill="currentColor"/><circle cx="15" cy="16" r="1.2" fill="currentColor"/>',info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/>',alert:'<circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 16.5v.5"/>',plus:'<path d="M12 5v14M5 12h14"/>',minus:'<path d="M5 12h14"/>',wallet:'<rect x="3" y="6" width="18" height="14" rx="3"/><path d="M16 13h2M3 10h18"/>',cash:'<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/>',cam:'<rect x="3" y="7" width="18" height="13" rx="2"/><circle cx="12" cy="13.5" r="3.5"/><path d="M8 7l2-3h4l2 3"/>',img:'<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/>',trash:'<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/>',out:'<path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h10"/>',bell:'<path d="M6 16v-5a6 6 0 0112 0v5l2 2H4zM10 21h4"/>'};
+const I=(k,s=20,w=2)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round">${IC[k]}</svg>`;
+
+// ---------- data helpers ----------
+const MON=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+const DOW=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],DOWL=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+function di(iso){const d=new Date(iso+'T00:00:00');const m=MON[d.getMonth()];return{mon:m,day:String(d.getDate()).padStart(2,'0'),dow:DOW[d.getDay()],dowl:DOWL[d.getDay()],long:`${DOW[d.getDay()]}, ${m[0]+m.slice(1).toLowerCase()} ${d.getDate()}, ${d.getFullYear()}`,short:`${DOW[d.getDay()]}, ${m[0]+m.slice(1).toLowerCase()} ${d.getDate()}`}}
+const ft=h=>{const hh=h%12||12;return `${hh}:00 ${h<12||h===24?'AM':'PM'}`};
+const range=(s,e)=>`${ft(s)} – ${ft(e)}`;
+const price=(s,e,p)=>{let t=0;for(let h=s;h<e;h++)t+=h<16?50*p:300;return t};
+const peso=n=>'₱'+n.toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2});
+const rateLbl=(s,e)=>e<=16?'Day rate · ₱50/hr per person':s>=16?'Peak rate · ₱300/hr flat':'Day + peak rates';
+const rateShort=(s,e)=>e<=16?'Day · ₱50/hr per person':s>=16?'Peak · ₱300/hr flat':'Day + peak';
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const DATES=['2026-11-18','2026-11-19','2026-11-20','2026-11-21','2026-11-22','2026-11-23','2026-11-24'];
+const SLOTS=[[6,8],[8,10],[10,12],[12,14],[14,16],[16,18],[18,20],[20,22],[22,23]];
+const TAKEN={'2026-11-18':[1,5],'2026-11-19':[0,6],'2026-11-20':[1,5],'2026-11-21':[2,3,6],'2026-11-22':[4],'2026-11-23':[0,7],'2026-11-24':[3]};
+
+function seed(){return{
+ screen:'splash',ov:null,toast:null,err:null,tab:'up',sel:'WH-1024',
+ user:{first:'Test',last:'User',email:'testuser@gmail.com',phone:'0917 123 4567'},photo:true,remind:true,receipts:false,terms:true,
+ login:{email:'testuser@gmail.com',pw:'password1'},pw:{cur:'',nw:'',cf:''},
+ date:'2026-11-20',bk:{date:'2026-11-20',s:18,e:20,p:4},pay:'GCash',next:1041,
+ bookings:[
+  {id:'WH-1024',date:'2026-11-20',s:18,e:20,p:4,pay:'GCash',st:'Confirmed',on:'Nov 17, 2026'},
+  {id:'WH-1031',date:'2026-11-22',s:8,e:10,p:2,pay:'Cash',st:'Pending',on:'Nov 16, 2026'},
+  {id:'WH-1040',date:'2026-11-25',s:16,e:17,p:6,pay:'Maya',st:'Confirmed',on:'Nov 18, 2026'},
+  {id:'WH-0971',date:'2026-11-08',s:19,e:20,p:4,pay:'Cash',st:'Cancelled',on:'Nov 2, 2026'},
+  {id:'WH-0950',date:'2026-11-05',s:6,e:8,p:4,pay:'GCash',st:'Completed',on:'Nov 1, 2026'},
+  {id:'WH-0902',date:'2026-10-28',s:17,e:19,p:2,pay:'Cash',st:'Completed',on:'Oct 25, 2026'}]}}
+let S=seed();
+const B=id=>S.bookings.find(b=>b.id===id);
+const total=b=>price(b.s,b.e,b.p);
+const ini=()=>((S.user.first[0]||'')+(S.user.last[0]||'')).toUpperCase()||'?';
+function slotTaken(date,s,e){const t=(TAKEN[date]||[]).some(i=>SLOTS[i][0]<e&&SLOTS[i][1]>s);const mine=S.bookings.some(b=>b.date===date&&b.st!=='Cancelled'&&b.s<e&&b.e>s);return t||mine}
+
+// ---------- pieces ----------
+const sbar=(light)=>`<div class="sbar${light?' light':''}"><span>9:41</span><span class="batt"><i></i></span></div>`;
+const hdr=(t,o={})=>`<div class="hdr">${o.back?`<button class="back" data-go="${o.back}" aria-label="Back">${I('back',22,2.5)}</button>`:''}<div class="grow"><div class="t1">${t}</div>${o.sub?`<div class="sub">${o.sub}</div>`:''}</div>${o.av?`<button class="av" data-go="settings" aria-label="Settings">${ini()}</button>`:''}${o.right||''}</div>`;
+const NAV=[['Home','home','home'],['Book','cal','book'],['My Bookings','list','bookings'],['Settings','gear','settings']];
+const nav=a=>`<nav class="nav"><div class="brand"><span class="logo">${I('ball',24,1.8)}</span><div><b>Wrong House</b><small>PICKLEBALL</small></div></div>${NAV.map(([l,k,g])=>`<button class="${l===a?'on':''}" data-go="${g}"><span class="pill">${I(k)}</span>${l}</button>`).join('')}</nav>`;
+const inp=(lab,bind,val,o={})=>`<div class="fld"><label class="lab">${lab}</label><div class="inp${o.err?' err':''}">${o.ic?I(o.ic):''}<input ${o.pw?'type="password"':'type="text"'} data-bind="${bind}" value="${esc(val)}" placeholder="${o.ph||''}">${o.pw?`<button class="eye" data-act="peek" aria-label="Show password">${I('eye')}</button>`:''}</div></div>`;
+const rows=R=>`<div class="rows">${R.map(([k,v])=>`<div class="r"><span>${k}</span><span>${v}</span></div>`).join('')}</div>`;
+const badge=t=>`<span class="badge b-${t}">${t}</span>`;
+const errBox=()=>S.err?`<div class="errmsg">${S.err}</div>`:'';
+function card(b){const d=di(b.date);const mu=b.st!=='Confirmed'&&b.st!=='Pending';const cx=b.st==='Cancelled';const cash=b.pay==='Cash';
+ return `<div class="bk" data-act="view" data-id="${b.id}"><div class="top"><div class="date${mu?' mute':''}"><small>${d.mon}</small><b>${d.day}</b></div><div class="info"><div class="time">${range(b.s,b.e)}</div><div class="meta">${rateLbl(b.s,b.e)}<br>${b.p} players · ${b.pay} · #${b.id}</div></div><div>${badge(b.st)}</div></div>
+ <div class="bot"><div><small>Total</small><b>${peso(total(b))}</b></div><div class="acts">${!mu?`<button class="btn o xs" data-act="view" data-id="${b.id}">View</button><button class="btn d xs" data-act="askCancel" data-id="${b.id}">Cancel</button>`:''}${b.st==='Completed'?`<button class="btn o xs" data-act="again" data-id="${b.id}">Book again</button>`:''}</div></div>
+ ${cx?`<div class="refund" style="background:${cash?'var(--gy)':'var(--bl)'};color:${cash?'var(--gr)':'var(--bu)'}">${cash?'No refund needed (cash payment)':`Refund to ${b.pay} in 3–5 business days`}</div>`:''}</div>`}
+
+// ---------- screens ----------
+const SC={};
+SC.splash=()=>`${sbar(1)}<div class="scr nonav splash"><div class="deco" style="width:320px;height:320px;left:-90px;top:-70px"></div><div class="deco" style="width:260px;height:260px;right:-100px;bottom:40px"></div>
+ <div style="position:relative;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
+ <div class="logo" style="width:120px;height:120px;border-radius:36px">${I('ball',60,1.8)}</div>
+ <div style="font-size:34px;font-weight:800;margin-top:32px">Wrong House</div><div style="font-size:15px;font-weight:700;color:var(--l);letter-spacing:.12em;margin-top:4px">PICKLEBALL</div>
+ <p style="font-size:14px;color:var(--sg);margin-top:18px;max-width:300px;line-height:1.5">Book your court in Simangan, Ormoc City — open daily from 6 AM to 11 PM.</p></div>
+ <div style="position:relative"><button class="btn l" data-go="register" style="height:54px">Get Started</button><p class="foot" style="color:var(--sg)">Already have an account? <button class="link" style="color:var(--l)" data-go="login">Log in</button></p></div></div>`;
+SC.login=()=>`${sbar()}<div class="scr nonav"><div class="logo" style="width:52px;height:52px;border-radius:16px;margin-top:10px">${I('ball',28,1.8)}</div>
+ <div class="t2" style="margin-top:24px">Welcome back</div><p class="sub" style="font-size:14px;margin-bottom:24px">Log in to book your pickleball court.</p>${errBox()}
+ ${inp('Email','login.email',S.login.email,{ic:'mail',ph:'you@email.com'})}${inp('Password','login.pw',S.login.pw,{ic:'lock',pw:1})}
+ <div style="text-align:right;margin:-4px 0 18px"><button class="link" style="font-size:13px;font-weight:600" data-go="forgot">Forgot password?</button></div>
+ <button class="btn p" data-act="login">Log in</button><div class="divider">or continue with</div>
+ <div class="stack"><button class="btn o" data-act="social"><span class="mark" style="border:1px solid var(--ln);color:#4285F4">G</span>Continue with Google</button><button class="btn o" data-act="social"><span class="mark" style="background:#1877F2;color:#fff">f</span>Continue with Facebook</button></div>
+ <p class="foot" style="margin-top:28px">Don't have an account? <button class="link" data-go="register">Sign up</button></p></div>`;
+SC.register=()=>`${sbar()}<div class="scr nonav">${hdr('Create account',{back:'login',sub:'Join Wrong House Pickleball in a minute.'})}${errBox()}
+ <div class="two">${inp('First name','user.first',S.user.first)}${inp('Last name','user.last',S.user.last)}</div>
+ ${inp('Email','user.email',S.user.email,{ic:'mail'})}${inp('Phone number','user.phone',S.user.phone,{ic:'phone'})}
+ ${inp('Password','reg.pw',S.reg?.pw??'password1',{ic:'lock',pw:1})}${inp('Confirm password','reg.cf',S.reg?.cf??'password1',{ic:'lock',pw:1})}
+ <button style="display:flex;gap:10px;align-items:center;font-size:13px;color:var(--gr);margin:4px 0 20px" data-act="terms"><span class="cb${S.terms?' on':''}">${S.terms?I('check',14,3):''}</span>I agree to the Terms and Privacy Policy</button>
+ <button class="btn p" data-act="register">Create account</button><p class="foot">Already have an account? <button class="link" data-go="login">Log in</button></p></div>`;
+SC.forgot=()=>`${sbar()}<div class="scr nonav">${hdr('',{back:'login'})}<div class="ico green" style="margin:0 0 20px;width:64px;height:64px">${I('lock',28)}</div>
+ <div class="t2">Forgot password?</div><p class="sub" style="font-size:14px;margin-bottom:24px">Enter the email you signed up with and we'll send you a link to reset your password.</p>${errBox()}
+ ${inp('Email','login.email',S.login.email,{ic:'mail',ph:'you@email.com'})}<button class="btn p" data-act="forgot" style="margin-top:6px">Send reset link</button>
+ <p class="foot">Remembered it? <button class="link" data-go="login">Back to log in</button></p></div>`;
+SC.sent=()=>`${sbar()}<div class="scr nonav" style="display:flex;flex-direction:column"><div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
+ <div class="logo" style="width:120px;height:120px;border-radius:60px">${I('mail',60,1.6)}</div><div class="t1" style="font-size:26px;margin-top:28px">Check your email</div>
+ <p class="sub" style="font-size:14px;max-width:300px;margin-top:10px">We sent a password reset link to <b style="color:var(--k)">${esc(S.login.email)}</b>. It expires in 30 minutes.</p></div>
+ <button class="btn p" data-go="login">Back to log in</button><p class="foot">Didn't get it? <button class="link" data-go="forgot">Resend link</button></p></div>`;
+SC.home=()=>{const d=di(S.date);const open=SLOTS.filter(([s,e])=>!slotTaken(S.date,s,e)).length;
+ return `${sbar()}<div class="scr"><div class="hdr"><div class="grow"><div class="t1" style="font-size:22px">Good evening, ${esc(S.user.first||'there')}</div><div class="sub">Wrong House Pickleball · Simangan, Ormoc City</div></div><button class="av" data-go="settings">${ini()}</button></div>
+ <div class="rates"><div><small>TODAY'S RATES</small><span>6 AM – 4 PM</span><b>₱50 / hr per person</b></div><div><small>&nbsp;</small><span>4 PM – 11 PM</span><b>₱300 / hr flat</b></div></div>
+ <div class="h3" style="margin:22px 0 10px">Choose a date</div><div class="dates">${DATES.map(x=>{const q=di(x);return `<button class="${x===S.date?'on':''}" data-act="pickDate" data-d="${x}"><small>${q.dow}</small><b>${+q.day}</b></button>`}).join('')}</div>
+ <div style="display:flex;justify-content:space-between;align-items:baseline;margin:22px 0 10px"><span class="h3">Available slots · ${d.short}</span><span style="font-size:13px;font-weight:600;color:var(--g)">${open} open</span></div>
+ <div class="stack grid2" style="gap:10px">${SLOTS.map(([s,e])=>{const t=slotTaken(S.date,s,e);return `<div class="slot${t?' off':''}"><span class="ci">${I('clock')}</span><div class="grow"><div class="st">${range(s,e)}</div><div class="rt">${rateLbl(s,e)} · ${peso(price(s,e,4))} for 4</div></div>${t?badge('Booked'):`<button class="btn p xs" data-act="pickSlot" data-s="${s}" data-e="${e}">Book</button>`}</div>`}).join('')}</div></div>${nav('Home')}`};
+SC.book=()=>{const k=S.bk,d=di(k.date),bad=k.e<=k.s,clash=!bad&&slotTaken(k.date,k.s,k.e),tot=bad?0:price(k.s,k.e,k.p);
+ const opts=(a,b,v)=>{let o='';for(let h=a;h<=b;h++)o+=`<option value="${h}"${h===v?' selected':''}>${ft(h)}</option>`;return o};
+ return `${sbar()}<div class="scr">${hdr('Book a Court',{back:'home',sub:'Pick your time and number of players.'})}
+ <div class="fld"><label class="lab">Date</label><div class="inp">${I('cal')}<select data-bk="date">${DATES.map(x=>`<option value="${x}"${x===k.date?' selected':''}>${di(x).long}</option>`).join('')}</select></div></div>
+ <div class="two"><div class="fld"><label class="lab">Start time</label><div class="inp">${I('clock')}<select data-bk="s">${opts(6,22,k.s)}</select></div></div><div class="fld"><label class="lab">End time</label><div class="inp${bad?' err':''}">${I('clock')}<select data-bk="e">${opts(7,23,k.e)}</select></div></div></div>
+ <label class="lab">Players</label><div class="step" style="margin-bottom:14px"><button data-act="pl" data-v="-1" aria-label="Fewer players">${I('minus')}</button><b>${I('users')}${k.p} player${k.p>1?'s':''}</b><button class="plus" data-act="pl" data-v="1" aria-label="More players">${I('plus')}</button></div>
+ ${bad?`<div class="errmsg">End time must be after the start time.</div>`:clash?`<div class="errmsg">Part of this time is already booked on ${d.short}. Try another slot.</div>`:`<div class="note green">${I('info',18)}<span>${k.s>=16?'Peak hours (4 PM – 11 PM): ₱300/hr flat, any number of players.':k.e<=16?'Day hours (6 AM – 4 PM): ₱50/hr for each player.':'This booking crosses 4 PM, so day and peak rates both apply.'}</span></div>`}
+ <div class="card" style="margin-top:14px"><div class="h3" style="margin-bottom:6px">Price summary</div>${rows([['Date',d.short],['Time',bad?'—':range(k.s,k.e)],['Duration',bad?'—':`${k.e-k.s} hour${k.e-k.s>1?'s':''}`],['Players',k.p],['Rate',bad?'—':rateShort(k.s,k.e)]])}<div class="total"><b>Total</b><strong>${peso(tot)}</strong></div></div>
+ <button class="btn p" style="margin-top:18px" data-go="payment" ${bad||clash?'disabled':''}>Continue to payment</button></div>${nav('Book')}`};
+SC.payment=()=>{const k=S.bk,tot=price(k.s,k.e,k.p);const M=[['GCash','Pay instantly with your GCash wallet','phone'],['Maya','Pay with your Maya wallet','wallet'],['Cash','Pay at the front desk before your game','cash']];
+ return `${sbar()}<div class="scr nonav">${hdr('Payment',{back:'book',sub:'Step 2 of 2 · Choose how to pay'})}
+ <div class="card" style="display:flex;justify-content:space-between;align-items:center"><div><div class="h3">${di(k.date).short} · ${range(k.s,k.e)}</div><div class="sub">${k.p} players · ${rateShort(k.s,k.e)}</div></div><b style="font-size:18px;color:var(--g)">${peso(tot)}</b></div>
+ <div class="h3" style="margin:22px 0 10px">Payment method</div><div class="stack">${M.map(([n,s,i])=>`<button class="opt${S.pay===n?' on':''}" data-act="method" data-m="${n}"><span class="oi">${I(i)}</span><span class="grow"><b>${n==='Cash'?'Cash at the front desk':n}</b><small>${s}</small></span><span class="radio"></span></button>`).join('')}</div>
+ <div class="note ${S.pay==='Cash'?'amber':'blue'}" style="margin-top:14px">${I('info',18)}<span>${S.pay==='Cash'?'Your booking stays Pending until you pay at the front desk.':'Online payments are refunded if you cancel at least 2 hours before your slot.'}</span></div>
+ <div style="display:flex;justify-content:space-between;align-items:baseline;margin:26px 0 12px"><span class="muted">Total to pay</span><b style="font-size:24px">${peso(tot)}</b></div>
+ <button class="btn p" data-act="pay">${S.pay==='Cash'?'Confirm booking':`Pay ${peso(tot)} with ${S.pay}`}</button></div>`};
+SC.checkout=()=>{const k=S.bk,tot=price(k.s,k.e,k.p);
+ return `${sbar()}<div class="scr nonav">${hdr('Pay with '+S.pay,{back:'payment',sub:'Test payment only — no real money is charged.'})}
+ <div class="card center" style="padding:24px 20px"><div class="logo" style="width:48px;height:48px;border-radius:14px;margin:0 auto;font-weight:800">WH</div><div class="h3" style="margin-top:12px">Wrong House Pickleball</div><div class="sub">Simangan, Ormoc City</div>
+ <div class="sub" style="margin-top:18px">Amount due</div><div style="font-size:34px;font-weight:800;color:var(--g)">${peso(tot)}</div>
+ <div style="text-align:left;margin-top:14px">${rows([['Reference','WH-'+S.next],['Booking',`${di(k.date).short} · ${range(k.s,k.e)}`],[S.pay+' number','0917 ••• 4567']])}</div></div>
+ <div class="note green" style="margin-top:14px">${I('lock',18)}<span>Your payment is protected and encrypted.</span></div>
+ <div class="stack" style="margin-top:28px"><button class="btn p" data-act="confirmPay">Confirm payment</button><button class="btn o" data-go="payment">Cancel</button></div></div>`};
+SC.confirmed=()=>{const b=B(S.sel),d=di(b.date),cash=b.pay==='Cash';
+ return `${sbar()}<div class="scr nonav"><div class="center" style="margin-top:6px"><div class="ico" style="width:80px;height:80px;background:var(--l);color:var(--gd)">${I('check',40,3)}</div>
+ <div class="t1">Booking ${cash?'Reserved':'Confirmed'}!</div><p class="sub" style="font-size:14px">See you on the court, ${esc(S.user.first||'player')}.</p></div>
+ <div class="card" style="margin-top:20px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><span class="h3">Summary</span>${badge(b.st)}</div>
+ ${rows([['Booking ID','#'+b.id],['Date',d.long],['Time',range(b.s,b.e)],['Duration',`${b.e-b.s} hour${b.e-b.s>1?'s':''}`],['Players',b.p],['Rate',rateShort(b.s,b.e)],['Payment',cash?'Cash · Pay at desk':b.pay+' · Paid']])}<div class="total"><b>Total</b><strong>${peso(total(b))}</strong></div></div>
+ ${cash?`<div class="note amber" style="margin-top:12px">${I('info',18)}<span>Please pay ${peso(total(b))} at the front desk before your game.</span></div>`:''}
+ <p class="sub" style="display:flex;gap:6px;align-items:center;margin:14px 0 18px">${I('pin',18)}Simangan, Ormoc City, Leyte</p>
+ <div class="stack"><button class="btn p" data-act="toBookings">View My Bookings</button><button class="btn o" data-go="home">Back to Home</button></div></div>`};
+SC.bookings=()=>{const L={up:S.bookings.filter(b=>b.st==='Confirmed'||b.st==='Pending'),past:S.bookings.filter(b=>b.st==='Completed'),cx:S.bookings.filter(b=>b.st==='Cancelled')}[S.tab];
+ return `${sbar()}<div class="scr">${hdr('My Bookings',{sub:'Wrong House Pickleball',av:1})}<div class="tabs">${[['up','Upcoming'],['past','Past'],['cx','Cancelled']].map(([k,l])=>`<button class="${S.tab===k?'on':''}" data-act="tab" data-t="${k}">${l}</button>`).join('')}</div>
+ <div class="stack grid2" style="gap:14px">${L.length?L.map(card).join(''):`<div class="empty">${S.tab==='up'?`No upcoming games yet.<br><br><button class="btn p sm" style="margin:auto" data-go="home">Book a court</button>`:'Nothing here yet.'}</div>`}${S.tab==='past'&&L.length?`<p class="empty" style="padding:6px">That's all your past games.</p>`:''}</div></div>${nav('My Bookings')}`};
+SC.details=()=>{const b=B(S.sel),d=di(b.date),up=b.st==='Confirmed'||b.st==='Pending';
+ return `${sbar()}<div class="scr nonav">${hdr('Booking Details',{back:'bookings',right:badge(b.st)})}
+ <div class="hero"><div class="date"><small>${d.mon}</small><b>${d.day}</b></div><div><div style="font-size:13px;color:var(--sg);font-weight:500">${d.dowl}</div><div style="font-size:20px;font-weight:800;margin:2px 0">${range(b.s,b.e)}</div><div style="font-size:13px;color:var(--sg)">${b.e-b.s} hour${b.e-b.s>1?'s':''} · ${b.p} players</div></div></div>
+ <div class="card" style="margin-top:14px"><div class="h3" style="margin-bottom:4px">Booking info</div>${rows([['Booking ID','#'+b.id],['Rate',rateShort(b.s,b.e)],['Payment method',b.pay],['Payment status',b.st==='Cancelled'?(b.pay==='Cash'?'Not paid':'Refunded'):b.pay==='Cash'&&b.st==='Pending'?'Pay at desk':'Paid'],['Booked on',b.on]])}<div class="total"><b>Total</b><strong>${peso(total(b))}</strong></div></div>
+ <div class="card" style="margin-top:14px;display:flex;gap:14px;align-items:center"><span class="ico green" style="margin:0;width:44px;height:44px">${I('pin')}</span><div><div class="h3">Wrong House Pickleball</div><div class="sub">Simangan, Ormoc City, Leyte</div></div></div>
+ ${up?`<div class="note blue" style="margin-top:14px">${I('info',18)}<span>Free cancellation up to 2 hours before your slot.</span></div>`:''}
+ <div class="stack" style="margin-top:22px">${up?`<button class="btn d" data-act="askCancel" data-id="${b.id}">Cancel Booking</button>`:''}${b.st==='Completed'?`<button class="btn p" data-act="again" data-id="${b.id}">Book again</button>`:''}<button class="btn o" data-go="bookings">Back to My Bookings</button></div></div>`};
+SC.settings=()=>`${sbar()}<div class="scr">${hdr('Settings',{sub:'Manage your profile and account'})}
+ <div class="card" style="display:flex;align-items:center;gap:14px"><button class="av" style="width:52px;height:52px;font-size:16px;${S.photo?'box-shadow:0 0 0 3px var(--l)':'background:var(--mu)'}" data-act="photo">${ini()}</button><div style="flex:1;min-width:0"><div class="h3" style="font-size:17px">${esc(S.user.first)} ${esc(S.user.last)}</div><div class="sub" style="margin:0;overflow:hidden;text-overflow:ellipsis">${esc(S.user.email)}</div></div><button class="link" style="font-size:13px" data-act="photo">Edit photo</button></div>
+ <div class="sec">PROFILE</div><div class="card">${errBox()}<div class="two">${inp('First name','user.first',S.user.first)}${inp('Last name','user.last',S.user.last)}</div>${inp('Email','user.email',S.user.email,{ic:'mail'})}${inp('Phone number','user.phone',S.user.phone,{ic:'phone'})}<button class="btn p" data-act="save">Save Changes</button></div>
+ <div class="sec">ACCOUNT</div><div class="card" style="padding:0"><button class="arow" data-go="password">${I('lock')}<span class="grow">Change password</span>${I('chev',20)}</button>
+ <button class="arow" data-act="tog" data-k="remind">${I('bell')}<span class="grow">Booking reminders</span><span class="toggle${S.remind?' on':''}"></span></button>
+ <button class="arow" data-act="tog" data-k="receipts">${I('mail')}<span class="grow">Email receipts</span><span class="toggle${S.receipts?' on':''}"></span></button></div>
+ <button class="btn d" style="margin-top:22px" data-act="askOut">Log out</button></div>${nav('Settings')}`;
+SC.password=()=>`${sbar()}<div class="scr nonav">${hdr('Change Password',{back:'settings',sub:'Use at least 8 characters with a number.'})}${errBox()}
+ ${inp('Current password','pw.cur',S.pw.cur,{ic:'lock',pw:1,ph:'Enter current password'})}${inp('New password','pw.nw',S.pw.nw,{ic:'lock',pw:1,ph:'At least 8 characters'})}${inp('Confirm new password','pw.cf',S.pw.cf,{ic:'lock',pw:1,ph:'Type it again'})}
+ <div id="meter">${meter()}</div><div class="stack" style="margin-top:22px"><button class="btn p" data-act="updatePw">Update password</button><button class="btn o" data-go="settings">Cancel</button></div></div>`;
+function meter(){const p=S.pw.nw,c=[p.length>=8,/\d/.test(p),p.length>0&&p===S.pw.cf],n=[p.length>=8,/\d/.test(p),/[A-Z]/.test(p),/[^A-Za-z0-9]/.test(p)].filter(Boolean).length;
+ const lbl=['Too weak','Weak','Okay','Good','Strong'][n],col=n<2?'var(--r)':n<3?'var(--am)':'var(--g)';
+ return `<div style="display:flex;justify-content:space-between;font-size:13px;margin-top:4px"><b>Strength</b><b style="color:${p?col:'var(--mu)'}">${p?lbl:'—'}</b></div><div class="bars">${[0,1,2,3].map(i=>`<i style="${i<n?'background:'+col:''}"></i>`).join('')}</div>
+ ${['At least 8 characters','Contains a number','Passwords match'].map((t,i)=>`<div class="chk${c[i]?' ok':''}"><i>${I('check',12,3)}</i>${t}</div>`).join('')}`}
+
+// overlays
+const OV={};
+OV.cancel=()=>{const b=B(S.sel),cash=b.pay==='Cash';return `<div class="ov" data-act="closeOv"></div><div class="sheet"><div class="ico red">${I('alert',28)}</div><div class="t1 center" style="font-size:20px">Cancel this booking?</div><p class="sub center">You can't undo this action.</p>
+ <div style="margin:14px 0 18px">${rows([['Date',di(b.date).long],['Time',range(b.s,b.e)],['Refund',cash?'None (cash, not yet paid)':`${peso(total(b))} to ${b.pay}`]])}</div>
+ <div class="two"><button class="btn o" data-act="closeOv">Keep booking</button><button class="btn D" data-act="doCancel">Yes, cancel</button></div></div>`};
+OV.photo=()=>`<div class="ov" data-act="closeOv"></div><div class="sheet"><div class="t1 center" style="font-size:18px;margin-bottom:16px">Profile photo</div><div class="stack" style="gap:10px">
+ <button class="opt" data-act="photoSet" data-v="1">${I('cam')}<b>Take a photo</b></button><button class="opt" data-act="photoSet" data-v="1">${I('img')}<b>Choose from gallery</b></button><button class="opt" style="background:var(--rl);border-color:var(--rl);color:var(--r)" data-act="photoSet" data-v="0">${I('trash')}<b>Remove photo</b></button></div>
+ <button class="btn o" style="margin-top:14px" data-act="closeOv">Cancel</button></div>`;
+OV.out=()=>`<div class="ov" data-act="closeOv"></div><div class="dlg"><div class="ico red">${I('out',24)}</div><div class="t1" style="font-size:22px">Log out?</div><p class="sub" style="font-size:14px;margin:8px 10px 22px">You'll need to log in again to book or manage your courts.</p>
+ <div class="two"><button class="btn o" data-act="closeOv">Cancel</button><button class="btn D" data-act="doOut">Log out</button></div></div>`;
+OV.social=()=>`<div class="ov" data-act="closeOv"></div><div class="dlg"><div class="ico green">${I('info',24)}</div><div class="t1" style="font-size:20px">Demo sign-in</div><p class="sub" style="font-size:14px;margin:8px 10px 22px">Google and Facebook sign-in aren't connected in this prototype. Continue as Test User?</p>
+ <div class="two"><button class="btn o" data-act="closeOv">Cancel</button><button class="btn p" data-act="socialGo">Continue</button></div></div>`;
+
+// ---------- screen list (side panel) ----------
+const LIST=[['Member 1 — Accounts',[['1.1','Splash','splash'],['1.2','Login','login'],['1.3','Register','register'],['1.4','Forgot Password','forgot'],['1.5','Reset Link Sent','sent']]],
+ ['Member 2 — Booking',[['2.1','Home – Available Slots','home'],['2.2','Book a Court','book'],['2.3','Payment','payment'],['2.4','GCash Checkout','checkout']]],
+ ['Member 3 — My Bookings · Settings',[['3.1','Booking Confirmed','j-confirmed'],['3.2','My Bookings – Upcoming','j-up'],['3.3','Booking Details','j-details'],['3.4','Cancel Booking','j-cancel'],['3.5','My Bookings – Cancelled','j-cx'],['3.6','My Bookings – Past','j-past'],['3.7','Settings','settings'],['3.8','Settings – Saved','j-saved'],['3.9','Edit Photo','j-photo'],['3.10','Change Password','password'],['3.11','Log Out','j-out']]]];
+let cur='splash';
+function jump(k){S.err=null;S.toast=null;S.ov=null;cur=k;const j={
+ 'j-confirmed':()=>{S.sel=B('WH-1024')?.st!=='Cancelled'?'WH-1024':S.bookings[0].id;S.screen='confirmed'},
+ 'j-up':()=>{S.tab='up';S.screen='bookings'},'j-past':()=>{S.tab='past';S.screen='bookings'},
+ 'j-details':()=>{S.sel=(S.bookings.find(b=>b.st==='Confirmed')||S.bookings[0]).id;S.screen='details'},
+ 'j-cancel':()=>{const b=S.bookings.find(b=>b.st==='Confirmed'||b.st==='Pending');S.tab='up';S.screen='bookings';if(b){S.sel=b.id;S.ov='cancel'}},
+ 'j-cx':()=>{S.tab='cx';S.screen='bookings'},
+ 'j-saved':()=>{S.screen='settings';toast('Changes saved','Your profile has been updated.')},
+ 'j-photo':()=>{S.screen='settings';S.ov='photo'},'j-out':()=>{S.screen='settings';S.ov='out'},
+ 'checkout':()=>{if(S.pay==='Cash')S.pay='GCash';S.screen='checkout'}}[k];
+ if(j)j();else S.screen=k;render()}
+function panel(){return;document.getElementById('panel').innerHTML=`<button class="reset mclose" onclick="document.getElementById('panel').classList.remove('open')">✕ Close</button><div><h1>Wrong House Pickleball</h1><p style="margin-top:6px">Clickable mobile prototype · all 20 screens. Tap anything in the phone, or jump to a screen below.</p></div>
+ ${LIST.map(([g,items])=>`<div class="grp"><h2>${g}</h2>${items.map(([n,l,k])=>`<button class="${k===cur?'on':''}" data-jump="${k}"><span>${n}</span>${l}</button>`).join('')}</div>`).join('')}
+ <button class="reset" data-act="reset">↺ Reset demo data</button>`}
+
+// ---------- render & actions ----------
+const KEYMAP={splash:'splash',login:'login',register:'register',forgot:'forgot',sent:'sent',home:'home',book:'book',payment:'payment',checkout:'checkout',confirmed:'j-confirmed',details:'j-details',settings:'settings',password:'password'};
+function syncCur(){if(S.screen==='bookings')cur=S.ov==='cancel'?'j-cancel':{up:'j-up',past:'j-past',cx:'j-cx'}[S.tab];else if(S.screen==='settings')cur=S.ov==='photo'?'j-photo':S.ov==='out'?'j-out':S.toast&&S.toast.t==='Changes saved'?'j-saved':'settings';else cur=KEYMAP[S.screen]||cur}
+let tt;
+function toast(t,s){S.toast={t,s};clearTimeout(tt);tt=setTimeout(()=>{S.toast=null;const el=document.querySelector('.toast');if(el)el.remove();syncCur();panel()},3200)}
+function render(){const ph=document.getElementById('phone');const prev=ph.querySelector('.scr');const keep=prev&&prev.dataset.s===S.screen?prev.scrollTop:0;
+ ph.innerHTML=SC[S.screen]()+(S.ov?OV[S.ov]():'')+(S.toast?`<div class="toast" data-act="hideToast"><span class="ck">${I('check',16,3)}</span><div><b>${S.toast.t}</b>${S.toast.s?`<small>${S.toast.s}</small>`:''}</div></div>`:'');
+ const sc=ph.querySelector('.scr');sc.dataset.s=S.screen;sc.scrollTop=keep;syncCur();panel()}
+function go(s){S.screen=s;S.err=null;S.ov=null;if(s==='password')S.pw={cur:'',nw:'',cf:''};render()}
+function newBooking(st){const k=S.bk,id='WH-'+S.next++;S.bookings.unshift({id,date:k.date,s:k.s,e:k.e,p:k.p,pay:S.pay,st,on:'Nov 20, 2026'});S.sel=id;S.date=k.date}
+const ACT={
+ login(){const{email,pw}=S.login;if(!/^\S+@\S+\.\S+$/.test(email))S.err='Enter a valid email address.';else if(!pw)S.err='Enter your password.';else{S.err=null;S.screen='home'}render()},
+ social(){S.ov='social';render()},socialGo(){S.ov=null;S.screen='home';render()},
+ terms(){S.terms=!S.terms;render()},
+ register(){const u=S.user,r=S.reg||{pw:'password1',cf:'password1'};if(!u.first.trim()||!u.last.trim())S.err='Please enter your first and last name.';else if(!/^\S+@\S+\.\S+$/.test(u.email))S.err='Enter a valid email address.';else if(r.pw.length<8)S.err='Password needs at least 8 characters.';else if(r.pw!==r.cf)S.err="Passwords don't match.";else if(!S.terms)S.err='Please agree to the Terms to continue.';else{S.err=null;S.screen='home';toast('Account created','Welcome to Wrong House, '+u.first+'!')}render()},
+ forgot(){if(!/^\S+@\S+\.\S+$/.test(S.login.email)){S.err='Enter a valid email address.';render()}else go('sent')},
+ pickDate(el){S.date=el.dataset.d;render()},
+ pickSlot(el){S.bk={date:S.date,s:+el.dataset.s,e:+el.dataset.e,p:S.bk.p};go('book')},
+ pl(el){S.bk.p=Math.min(12,Math.max(1,S.bk.p+ +el.dataset.v));render()},
+ method(el){S.pay=el.dataset.m;render()},
+ pay(){if(S.pay==='Cash'){newBooking('Pending');go('confirmed')}else go('checkout')},
+ confirmPay(){newBooking('Confirmed');go('confirmed')},
+ toBookings(){S.tab='up';go('bookings')},
+ tab(el){S.tab=el.dataset.t;render()},
+ view(el){S.sel=el.dataset.id;go('details')},
+ askCancel(el){S.sel=el.dataset.id;S.ov='cancel';render()},
+ doCancel(){const b=B(S.sel);b.st='Cancelled';S.ov=null;S.tab='cx';S.screen='bookings';toast('Cancelled successfully',b.pay==='Cash'?'No payment was taken for this cash booking.':`${peso(total(b))} will be refunded to your ${b.pay}.`);render()},
+ again(el){const b=B(el.dataset.id);const nx=DATES.find(d=>!slotTaken(d,b.s,b.e))||DATES[0];S.bk={date:nx,s:b.s,e:b.e,p:b.p};go('book')},
+ closeOv(){S.ov=null;render()},hideToast(){S.toast=null;render()},
+ photo(){S.ov='photo';render()},
+ photoSet(el){S.photo=el.dataset.v==='1';S.ov=null;toast(S.photo?'Photo updated':'Photo removed','Your profile has been updated.');render()},
+ save(){const u=S.user;if(!u.first.trim()||!u.last.trim())S.err='Name fields cannot be empty.';else if(!/^\S+@\S+\.\S+$/.test(u.email))S.err='Enter a valid email address.';else{S.err=null;toast('Changes saved','Your profile has been updated.')}render()},
+ tog(el){const k=el.dataset.k;S[k]=!S[k];toast(k==='remind'?`Booking reminders ${S[k]?'on':'off'}`:`Email receipts ${S[k]?'on':'off'}`);render()},
+ updatePw(){const p=S.pw;if(!p.cur)S.err='Enter your current password.';else if(p.nw.length<8||!/\d/.test(p.nw))S.err='New password needs at least 8 characters and a number.';else if(p.nw!==p.cf)S.err="New passwords don't match.";else{S.err=null;S.screen='settings';toast('Password updated','Use your new password next time you log in.')}render()},
+ askOut(){S.ov='out';render()},doOut(){S.ov=null;S.login.pw='';go('login')},
+ peek(el){const i=el.parentElement.querySelector('input');i.type=i.type==='password'?'text':'password';el.innerHTML=I(i.type==='password'?'eye':'eyeoff')},
+ reset(){S=seed();cur='splash';render()}};
+document.addEventListener('click',e=>{const j=e.target.closest('[data-jump]');if(j){jump(j.dataset.jump);return}
+ const a=e.target.closest('[data-act],[data-go]');if(!a)return;
+ if(a.dataset.act){if(['view'].includes(a.dataset.act)&&e.target.closest('button')&&e.target.closest('button')!==a)return;e.preventDefault();ACT[a.dataset.act](a);if(a.dataset.act==='tab'||a.dataset.act==='method'){}}
+ else go(a.dataset.go)});
+document.addEventListener('input',e=>{const b=e.target.dataset.bind;if(!b)return;const[o,k]=b.split('.');if(o==='reg'){S.reg=S.reg||{pw:'password1',cf:'password1'}}S[o][k]=e.target.value;if(o==='pw'){const m=document.getElementById('meter');if(m)m.innerHTML=meter()}});
+document.addEventListener('change',e=>{const k=e.target.dataset.bk;if(!k)return;S.bk[k]=k==='date'?e.target.value:+e.target.value;if(k==='s'&&S.bk.e<=S.bk.s)S.bk.e=Math.min(23,S.bk.s+1);render()});
+render();
+</script>
+</body>
+</html>
